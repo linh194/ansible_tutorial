@@ -1,3 +1,8 @@
+[web_servers]
 vboxuser@192.168.20.12
+
+[db_servers]
 ansible2@192.168.20.13
+
+[file_servers]
 ansible3@192.168.20.14
