@@ -2,21 +2,32 @@
 
 - hosts: all
   become: true
-  tasks:
+  pre_tasks:
 
-  - name: install updates (CentOS)
+  - name: update repo cache (CentOS)
     tags: always
     dnf:
-      update_only: yes
       update_cache: yes
+    changed_when: false
     when: ansible_distribution == "CentOS"
 
-  - name: install updates (Ubuntu)
+  - name: update repo cache (Ubuntu)
     tags: always
     apt:
-      upgrade: dist
       update_cache: yes
+    changed_when: false
     when: ansible_distribution == "Ubuntu"
+
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: add ssh key for bofa
+    tags: always
+    authorized_key:
+      user: bofa
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGqTC7sNby+oZ8ddSOrYcsir3nqOxjuS/eARCYnqlfhv ansible"
 
 - hosts: web_servers
   become: true
@@ -30,7 +41,6 @@
         - libapache2-mod-php
       state: latest
     when: ansible_distribution == "Ubuntu"
-
 
   - name: install apache and php packages for CentOS
     tags: apache,centos,httpd
@@ -49,6 +59,7 @@
       owner: root
       group: root
       mode: 0644
+
 
 - hosts: db_servers
   become: true
